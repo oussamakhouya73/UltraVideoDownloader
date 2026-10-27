@@ -6,6 +6,22 @@ A responsive dark-mode frontend prototype for a video downloader, intended for d
 
 The page is now connected to the backend. Downloads run as **background jobs** with live progress (percent, speed, ETA), **no file-size cap** and **no request timeout**, so long and large videos work when you run the server on your own computer.
 
+## Ready-made apps (no Python, no ffmpeg needed)
+
+Open the **Releases** page of this repo and download the zip for your system:
+
+- **Windows**: `UltraVideoDownloader-windows.zip` → unzip → double-click `UltraVideoDownloader.exe`. If SmartScreen warns, choose *More info → Run anyway* (the app is not code-signed).
+- **macOS**: `UltraVideoDownloader-macos.zip` → unzip → right-click the file → *Open* (first time only).
+- **Linux**: `UltraVideoDownloader-linux.zip` → unzip → `chmod +x UltraVideoDownloader` → run it.
+
+A black window opens and your browser opens on the page. Files are saved in `Downloads/UltraVideoDownloader`. Keep the black window open while downloading.
+
+**How the apps are built:** GitHub Actions builds them (`.github/workflows/build.yml`). To publish a new version, go to **Actions → Build apps → Run workflow** and enter a tag such as `v1.0.0`.
+
+### Android
+
+Android cannot run this server directly. Use a free open-source yt-dlp app instead, for example **YTDLnis** or **Seal** (from their GitHub releases or F-Droid). They run on your phone's own connection, with no size or length limits.
+
 ## Run locally (recommended for long / large videos)
 
 Requirements: Python 3 and [ffmpeg](https://ffmpeg.org/) installed.

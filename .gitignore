@@ -3,3 +3,6 @@
 backend/.venv/
 backend/downloads/
 __pycache__/
+dist/
+build/
+*.spec

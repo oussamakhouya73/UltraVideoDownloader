@@ -14,9 +14,11 @@ Environment variables:
 import os
 import re
 import shutil
+import sys
 import threading
 import time
 import uuid
+import webbrowser
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -24,9 +26,16 @@ import yt_dlp
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
 
-BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_DIR = BASE_DIR.parent
-DOWNLOAD_DIR = Path(os.environ.get("UVD_DOWNLOAD_DIR", BASE_DIR / "downloads")).resolve()
+FROZEN = getattr(sys, "frozen", False)  # True inside the packaged app
+if FROZEN:
+    # Packaged app: index.html is bundled; save files in the user's Downloads folder.
+    FRONTEND_DIR = Path(sys._MEIPASS)
+    DEFAULT_DOWNLOADS = Path.home() / "Downloads" / "UltraVideoDownloader"
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+    FRONTEND_DIR = BASE_DIR.parent
+    DEFAULT_DOWNLOADS = BASE_DIR / "downloads"
+DOWNLOAD_DIR = Path(os.environ.get("UVD_DOWNLOAD_DIR", DEFAULT_DOWNLOADS)).resolve()
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 MAX_FILESIZE_MB = int(os.environ.get("UVD_MAX_FILESIZE_MB", "0"))
 
@@ -58,6 +67,19 @@ def validate_url(value):
     )
 
 
+def find_ffmpeg():
+    """Use the system ffmpeg if present, else the one bundled by imageio-ffmpeg."""
+    if os.environ.get("UVD_FFMPEG"):
+        return os.environ["UVD_FFMPEG"]
+    if shutil.which("ffmpeg"):
+        return None  # yt-dlp finds it on PATH
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def build_options(job_dir, media_format, quality, on_progress):
     if media_format == "mp3":
         selector = "bestaudio/best"
@@ -84,6 +106,9 @@ def build_options(job_dir, media_format, quality, on_progress):
             if media_format == "mp3" else []
         ),
     }
+    ffmpeg = find_ffmpeg()
+    if ffmpeg:
+        options["ffmpeg_location"] = ffmpeg
     if MAX_FILESIZE_MB > 0:
         options["max_filesize"] = MAX_FILESIZE_MB * 1024 * 1024
     return options
@@ -223,4 +248,6 @@ if __name__ == "__main__":
     host = os.environ.get("UVD_HOST", "127.0.0.1")
     print(f"UltraVideoDownloader running on http://{host}:{port}")
     print(f"Files are saved in: {DOWNLOAD_DIR}")
+    if os.environ.get("UVD_OPEN_BROWSER", "1" if FROZEN else "0") == "1":
+        threading.Timer(1.5, webbrowser.open, args=(f"http://localhost:{port}",)).start()
     app.run(host=host, port=port, threaded=True)

@@ -1,0 +1,62 @@
+name: Build apps
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish (e.g. v1.0.0)"
+        required: true
+        default: "v1.0.0"
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+          - os: macos-latest
+            name: macos
+          - os: ubuntu-latest
+            name: linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt pyinstaller
+      - name: Build
+        run: python backend/build.py
+      - name: Zip
+        shell: python
+        run: |
+          import shutil, os
+          os.chdir("dist")
+          shutil.make_archive("../UltraVideoDownloader-${{ matrix.name }}", "zip", ".")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UltraVideoDownloader-${{ matrix.name }}
+          path: UltraVideoDownloader-${{ matrix.name }}.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          files: artifacts/*.zip
+          generate_release_notes: true
