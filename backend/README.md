@@ -14,7 +14,9 @@ The service may be slow to start on a free instance and has resource, request-du
 ## API
 
 - `GET /api/health`
-- `POST /api/download` JSON body: `{"url":"https://...","format":"mp4","quality":"1080"}`
+- `POST /api/jobs` JSON body: `{"url":"https://...","format":"mp4","quality":"1080"}` → `{"id":"..."}`
+- `GET /api/jobs/<id>` → status, percent, speed, eta
+- `GET /api/jobs/<id>/file` → the finished file (supports resume)
 
 Supported format values: `mp4`, `mp3`. Quality values: `best`, `2160`, `1440`, `1080`, `720`, `480`, `360`.
 
