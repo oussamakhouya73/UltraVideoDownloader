@@ -9,11 +9,13 @@ Environment variables:
   UVD_HOST              host to bind (default 127.0.0.1, local only)
   UVD_DOWNLOAD_DIR      where files are saved (default ./downloads)
   UVD_MAX_FILESIZE_MB   0 = unlimited (default)
-  UVD_CORS_ORIGINS      allowed origins (default: localhost only)
+  UVD_ALLOWED_ORIGINS   extra website origins allowed to talk to this local app,
+                        comma-separated (e.g. https://mydomain.com)
 """
 import os
 import re
 import shutil
+import subprocess
 import sys
 import threading
 import time
@@ -40,11 +42,39 @@ DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 MAX_FILESIZE_MB = int(os.environ.get("UVD_MAX_FILESIZE_MB", "0"))
 
 app = Flask(__name__)
-CORS(
-    app,
-    resources={r"/api/*": {"origins": os.environ.get(
-        "UVD_CORS_ORIGINS", r"http://(localhost|127\.0\.0\.1)(:\d+)?")}},
-)
+
+# Websites allowed to control this local app. Anything else is rejected, so a random
+# website you visit cannot start downloads on your computer.
+LOCAL_ORIGIN_RE = r"http://(localhost|127\.0\.0\.1)(:\d+)?"
+SITE_ORIGINS = ["https://ultravideodownloader.pages.dev"]  # <- change to your Pages / custom domain
+EXTRA_ORIGINS = [o.strip() for o in os.environ.get("UVD_ALLOWED_ORIGINS", "").split(",") if o.strip()]
+ALLOWED_ORIGINS = SITE_ORIGINS + EXTRA_ORIGINS
+
+
+def origin_allowed(origin):
+    return bool(re.fullmatch(LOCAL_ORIGIN_RE, origin)) or origin in ALLOWED_ORIGINS
+
+
+# Registered BEFORE CORS() so it runs after flask-cors and has the final say on this header.
+@app.after_request
+def allow_private_network(resp):
+    # Lets a public HTTPS website reach this app on localhost (Chrome/Edge requirement).
+    if request.headers.get("Access-Control-Request-Private-Network") == "true":
+        resp.headers["Access-Control-Allow-Private-Network"] = "true"
+    return resp
+
+
+CORS(app, resources={r"/api/*": {"origins": [LOCAL_ORIGIN_RE] + ALLOWED_ORIGINS}})
+
+
+@app.before_request
+def check_origin():
+    if request.path.startswith("/api/"):
+        origin = request.headers.get("Origin")
+        if origin and not origin_allowed(origin):
+            return jsonify({"error": "Origin not allowed."}), 403
+
+
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
 
 ALLOWED_SCHEMES = {"http", "https"}
@@ -155,12 +185,19 @@ def run_job(job_id, url, media_format, quality):
         if not files:
             raise RuntimeError("no output file")
         result = max(files, key=lambda p: p.stat().st_size)
+        dest = DOWNLOAD_DIR / result.name
+        n = 1
+        while dest.exists():
+            dest = DOWNLOAD_DIR / f"{result.stem} ({n}){result.suffix}"
+            n += 1
+        shutil.move(str(result), str(dest))
+        shutil.rmtree(job_dir, ignore_errors=True)
         update_job(
             job_id,
             status="done",
             percent=100,
-            filename=result.name,
-            size=result.stat().st_size,
+            filename=dest.name,
+            size=dest.stat().st_size,
         )
     except Exception as exc:  # noqa: BLE001
         message = str(exc)
@@ -181,7 +218,22 @@ def index():
 
 @app.get("/api/health")
 def health():
-    return jsonify({"ok": True, "service": "UltraVideoDownloader API"})
+    return jsonify({"ok": True, "service": "UltraVideoDownloader API", "folder": str(DOWNLOAD_DIR)})
+
+
+@app.post("/api/open-folder")
+def open_folder():
+    """Opens the downloads folder in the OS file manager (local use)."""
+    try:
+        if sys.platform.startswith("win"):
+            os.startfile(str(DOWNLOAD_DIR))  # noqa: S606
+        elif sys.platform == "darwin":
+            subprocess.Popen(["open", str(DOWNLOAD_DIR)])
+        else:
+            subprocess.Popen(["xdg-open", str(DOWNLOAD_DIR)])
+    except Exception:  # noqa: BLE001
+        return jsonify({"error": "Could not open the folder."}), 500
+    return jsonify({"ok": True})
 
 
 @app.post("/api/jobs")
@@ -232,7 +284,7 @@ def job_file(job_id):
         job = dict(JOBS.get(job_id) or {})
     if job.get("status") != "done":
         return jsonify({"error": "File is not ready."}), 409
-    path = DOWNLOAD_DIR / job_id / job["filename"]
+    path = DOWNLOAD_DIR / job["filename"]
     if not path.is_file():
         return jsonify({"error": "File no longer exists."}), 410
     return send_file(
