@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ultra-video-downloader-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    plan: free
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
