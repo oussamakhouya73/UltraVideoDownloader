@@ -301,5 +301,7 @@ if __name__ == "__main__":
     print(f"UltraVideoDownloader running on http://{host}:{port}")
     print(f"Files are saved in: {DOWNLOAD_DIR}")
     if os.environ.get("UVD_OPEN_BROWSER", "1" if FROZEN else "0") == "1":
-        threading.Timer(1.5, webbrowser.open, args=(f"http://localhost:{port}",)).start()
+        # Open the public website (it connects back to this helper); fall back to the local page.
+        open_url = os.environ.get("UVD_OPEN_URL") or (SITE_ORIGINS[0] if SITE_ORIGINS else f"http://localhost:{port}")
+        threading.Timer(1.5, webbrowser.open, args=(open_url,)).start()
     app.run(host=host, port=port, threaded=True)
