@@ -46,7 +46,7 @@ app = Flask(__name__)
 # Websites allowed to control this local app. Anything else is rejected, so a random
 # website you visit cannot start downloads on your computer.
 LOCAL_ORIGIN_RE = r"http://(localhost|127\.0\.0\.1)(:\d+)?"
-SITE_ORIGINS = ["https://ultravideodownloader.pages.dev"]  # <- change to your Pages / custom domain
+SITE_ORIGINS = ["https://ultravideodownloader.oussamakhouya73.workers.dev"]  # your site (add a custom domain here if you get one)
 EXTRA_ORIGINS = [o.strip() for o in os.environ.get("UVD_ALLOWED_ORIGINS", "").split(",") if o.strip()]
 ALLOWED_ORIGINS = SITE_ORIGINS + EXTRA_ORIGINS
 

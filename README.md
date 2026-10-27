@@ -13,7 +13,7 @@ The page is now connected to the backend. Downloads run as **background jobs** w
 - The website talks to the helper at `http://localhost:10000`. It shows a green box when connected, or a download link when the helper is not running.
 - The helper **only accepts requests from this website** (and from localhost), so other websites cannot control it.
 
-**Important setup for you (the owner):** in `backend/app.py`, set `SITE_ORIGINS` to your real Cloudflare Pages / custom domain (default guess: `https://ultravideodownloader.pages.dev`), then publish a new release so users get the updated helper. You can also allow extra domains without rebuilding via the `UVD_ALLOWED_ORIGINS` environment variable.
+**Important setup for you (the owner):** in `backend/app.py`, `SITE_ORIGINS` is set to `https://ultravideodownloader.oussamakhouya73.workers.dev`. If you add a custom domain, add it there, then publish a new release so users get the updated helper. You can also allow extra domains without rebuilding via the `UVD_ALLOWED_ORIGINS` environment variable.
 
 **Browser notes:** Chrome and Edge may ask to allow access to devices on the local network the first time: choose *Allow*. Safari blocks a public site from talking to localhost; in Safari, open `http://localhost:10000` instead (the helper serves the same page).
 
