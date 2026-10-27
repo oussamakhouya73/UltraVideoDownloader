@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="UltraVideoDownloader — a clean interface for choosing video quality and format.">
+<title>UltraVideoDownloader</title>
+<style>
+:root{color-scheme:dark;--bg:#090d19;--panel:#11182a;--panel2:#151e33;--line:#28334c;--muted:#98a5bd;--text:#f4f7ff;--blue:#7c9cff;--cyan:#69e0d0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#24335b 0,transparent 55%),var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);min-height:100vh}
+.wrap{width:min(1050px,calc(100% - 32px));margin:auto}.nav{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff12}.brand{display:flex;align-items:center;gap:11px;font-weight:750;letter-spacing:-.4px}.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#88a7ff,#6ce0d1);color:#08101e;font-size:19px}.tag{font-size:12px;color:#c2cee5;border:1px solid #ffffff20;padding:7px 10px;border-radius:99px}
+main{padding:68px 0 46px}.eyebrow{text-transform:uppercase;letter-spacing:2px;color:var(--cyan);font-size:11px;font-weight:800;text-align:center}.hero h1{text-align:center;font-size:clamp(36px,6vw,62px);letter-spacing:-2.7px;line-height:1.04;margin:16px auto 17px;max-width:780px}.hero h1 span{background:linear-gradient(90deg,#9bb2ff,#6ce0d1);background-clip:text;color:transparent}.sub{max-width:610px;margin:0 auto;text-align:center;color:var(--muted);line-height:1.7;font-size:16px}
+.card{max-width:780px;margin:36px auto 0;background:linear-gradient(160deg,#151d31f5,#0f1627f5);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 25px 90px #0005}.label{font-size:13px;color:#dce5f8;font-weight:650;display:block;margin:0 0 10px}.urlrow{display:flex;gap:10px}.urlrow input{min-width:0;flex:1;background:#090f1e;border:1px solid #303c58;border-radius:12px;padding:15px 16px;color:white;font-size:14px;outline:none}.urlrow input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #7c9cff20}.btn{border:0;border-radius:12px;padding:0 20px;background:linear-gradient(135deg,#91aaff,#6bd9d1);color:#08101e;font-weight:800;cursor:pointer;white-space:nowrap}.btn:hover{filter:brightness(1.08)}.options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.field select{width:100%;background:#0a1020;color:var(--text);border:1px solid #303c58;border-radius:11px;padding:13px;font-size:14px}.hint{font-size:12px;color:var(--muted);line-height:1.6;margin-top:14px}.notice{display:none;margin-top:18px;padding:13px 14px;border:1px solid #79683c;background:#2b2415;border-radius:11px;color:#f5dba0;font-size:13px;line-height:1.55}.notice.show{display:block}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:46px auto 0;max-width:900px}.feature{padding:20px;border:1px solid #ffffff12;background:#ffffff05;border-radius:16px}.ico{font-size:21px}.feature h3{font-size:14px;margin:12px 0 7px}.feature p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}.bottom{text-align:center;color:#77839d;font-size:12px;padding:25px 0 35px;border-top:1px solid #ffffff10}.bottom a{color:#b6c7ff;text-decoration:none}.footnote{max-width:780px;margin:20px auto 0;text-align:center;color:#71809d;font-size:11px;line-height:1.7}
+@media(max-width:620px){main{padding-top:48px}.card{padding:17px;margin-top:28px}.urlrow{flex-direction:column}.btn{padding:14px}.options{grid-template-columns:1fr}.features{grid-template-columns:1fr}.hero h1{letter-spacing:-1.5px}.tag{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="nav"><div class="brand"><div class="logo">▶</div><span>UltraVideo<span style="color:var(--cyan)">Downloader</span></span></div><span class="tag">FREE · HD · 4K READY UI</span></header>
+<main>
+<section class="hero"><div class="eyebrow">Simple. Clean. Quality-first.</div><h1>Your videos.<br><span>Your quality.</span></h1><p class="sub">A simple place to prepare video downloads and choose the quality you want. Paste a supported URL to get started.</p></section>
+<section class="card" aria-label="Download form">
+<label class="label" for="url">Video URL</label>
+<div class="urlrow"><input id="url" type="url" placeholder="Paste a video link here…" autocomplete="url" aria-describedby="help"><button class="btn" id="prepare">Check link <span aria-hidden="true">→</span></button></div>
+<div class="options">
+<div class="field"><label class="label" for="quality">Video quality</label><select id="quality"><option value="best">Best available</option><option>2160p · 4K</option><option>1440p · 2K</option><option selected>1080p · Full HD</option><option>720p · HD</option><option>480p</option><option>360p</option></select></div>
+<div class="field"><label class="label" for="format">Format</label><select id="format"><option value="mp4">MP4 · Video</option><option value="mp3">MP3 · Audio only</option></select></div>
+</div>
+<p class="hint" id="help">Quality options depend on the source video. 1080p or 4K may not be available for every link.</p>
+<div class="notice" id="notice" role="status"></div>
+</section>
+<section class="features">
+<div class="feature"><div class="ico">✦</div><h3>HD to 4K options</h3><p>Choose a target quality. The source must actually offer that resolution.</p></div>
+<div class="feature"><div class="ico">◷</div><h3>Long videos in mind</h3><p>The planned download engine will need to support large files and long-running jobs.</p></div>
+<div class="feature"><div class="ico">⌁</div><h3>Simple by design</h3><p>No account UI, no clutter, and a responsive layout for desktop and mobile.</p></div>
+</section>
+<p class="footnote">Prototype notice: this repository currently contains the website interface only. A download backend has not been connected yet, so this page will not download videos until the engine is implemented and deployed.</p>
+</main>
+<footer class="bottom">UltraVideoDownloader · Built for content you own or are authorized to download · <a href="https://github.com/oussamakhouya73/UltraVideoDownloader">GitHub repository</a></footer>
+</div>
+<script>
+const input=document.getElementById('url'), notice=document.getElementById('notice');
+document.getElementById('prepare').addEventListener('click',()=>{
+ const raw=input.value.trim();
+ notice.classList.add('show');
+ if(!raw){notice.textContent='Paste a video URL first.';input.focus();return;}
+ let parsed;
+ try{parsed=new URL(raw)}catch{notice.textContent='That does not look like a valid URL. Include https://';return;}
+ if(!['http:','https:'].includes(parsed.protocol)){notice.textContent='Please use an http or https URL.';return;}
+ notice.textContent='Link format looks valid. The download engine is not connected yet, so no download has started. Next step: connect a backend and test supported sources.';
+});
+document.getElementById('format').addEventListener('change',e=>{
+ const q=document.getElementById('quality');q.disabled=e.target.value==='mp3';q.style.opacity=q.disabled?'.5':'1';
+});
+input.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('prepare').click()});
+</script>
+</body>
+</html>
