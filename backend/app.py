@@ -9,8 +9,7 @@ Environment variables:
   UVD_HOST              host to bind (default 127.0.0.1, local only)
   UVD_DOWNLOAD_DIR      where files are saved (default ./downloads)
   UVD_MAX_FILESIZE_MB   0 = unlimited (default)
-  UVD_ALLOWED_ORIGINS   extra website origins allowed to talk to this local app,
-                        comma-separated (e.g. https://mydomain.com)
+  UVD_ALLOWED_ORIGINS   extra origins allowed to call this local app (normally none)
 """
 import os
 import re
@@ -53,9 +52,11 @@ app = Flask(__name__)
 # Websites allowed to control this local app. Anything else is rejected, so a random
 # website you visit cannot start downloads on your computer.
 LOCAL_ORIGIN_RE = r"http://(localhost|127\.0\.0\.1)(:\d+)?"
-SITE_ORIGINS = ["https://ultravideodownloader.oussamakhouya73.workers.dev"]  # your site (add a custom domain here if you get one)
+# The public website hosts the ad frames shown inside this app. Ad code is third-party,
+# so the website's origin must NOT be allowed to call this local API.
+SITE_URL = "https://ultravideodownloader.oussamakhouya73.workers.dev"  # used only for the ad frame (CSP frame-src)
 EXTRA_ORIGINS = [o.strip() for o in os.environ.get("UVD_ALLOWED_ORIGINS", "").split(",") if o.strip()]
-ALLOWED_ORIGINS = SITE_ORIGINS + EXTRA_ORIGINS
+ALLOWED_ORIGINS = EXTRA_ORIGINS
 
 
 def origin_allowed(origin):
@@ -68,6 +69,21 @@ def allow_private_network(resp):
     # Lets a public HTTPS website reach this app on localhost (Chrome/Edge requirement).
     if request.headers.get("Access-Control-Request-Private-Network") == "true":
         resp.headers["Access-Control-Allow-Private-Network"] = "true"
+    return resp
+
+
+CSP = (
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; "
+    f"img-src 'self' data:; connect-src 'self'; frame-src {SITE_URL}; "
+    "object-src 'none'; base-uri 'none'; form-action 'self'"
+)
+
+
+@app.after_request
+def security_headers(resp):
+    resp.headers["Content-Security-Policy"] = CSP
+    resp.headers["X-Content-Type-Options"] = "nosniff"
     return resp
 
 

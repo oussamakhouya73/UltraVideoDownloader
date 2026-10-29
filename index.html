@@ -77,6 +77,13 @@ ol span{opacity:.86;max-width:32em;display:block}
 footer{padding:28px 0 40px;font-size:14px;border-top:3px solid var(--ink)}
 footer a{text-underline-offset:4px}
 
+
+/* ads: slots stay collapsed until an ad is really there */
+.adslot{height:0;overflow:hidden;text-align:center}
+.adslot.on{height:auto;padding:clamp(20px,3vw,32px) 0 0}
+.adslot .adlabel{display:block;margin:0 0 8px;font-size:12px;opacity:.6}
+.adslot iframe{display:block;width:100%;max-width:728px;height:300px;border:0;margin:0 auto}
+.footer-links{margin-top:10px}
 @media(max-width:900px){
   .row{grid-template-columns:1fr}
   .row .get{justify-content:flex-start;margin-top:6px}
@@ -144,6 +151,7 @@ footer a{text-underline-offset:4px}
         <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-linux.zip">Download the zip</a></div>
       </div>
     </div>
+    <div class="adslot" data-slot="devices"><span class="adlabel">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div>
   </div>
 </section>
 
@@ -166,8 +174,10 @@ footer a{text-underline-offset:4px}
   </div>
 </section>
 
+<div class="wrap"><div class="adslot" data-slot="bottom"><span class="adlabel">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div></div>
+
 <footer>
-  <div class="wrap">Use it for videos you own or have permission to download. The rules of the site a video comes from still apply.</div>
+  <div class="wrap">Use it for videos you own or have permission to download. The rules of the site a video comes from still apply. <a href="/privacy.html">Privacy</a>.</div>
 </footer>
 
 <script>
@@ -177,6 +187,23 @@ footer a{text-underline-offset:4px}
   if(/Android/i.test(ua)){b.textContent='Get the Android app';b.href='https://github.com/deniscerri/ytdlnis/releases/latest'}
   else if(/Mac/i.test(ua)&&!/iPhone|iPad/i.test(ua)){b.textContent='Download for macOS';b.href=base+'UltraVideoDownloader-macos.zip'}
   else if(/Linux/i.test(ua)){b.textContent='Download for Linux';b.href=base+'UltraVideoDownloader-linux.zip'}
+})();
+</script>
+
+<script>
+// Ad slots: each one loads a small frame from /ads/ and opens only when that frame reports a real ad.
+(function(){
+  var file=innerWidth>=760?'banner.html':'banner-small.html';
+  var slots=[].slice.call(document.querySelectorAll('.adslot'));
+  slots.forEach(function(s){s.querySelector('iframe').src='/ads/'+file+'?s='+s.getAttribute('data-slot');});
+  addEventListener('message',function(e){
+    if(e.origin!==location.origin||!e.data||!e.data.uvdAd)return;
+    slots.forEach(function(s){
+      var f=s.querySelector('iframe');if(f.contentWindow!==e.source)return;
+      var h=Math.max(0,Math.min(300,+e.data.height||0));
+      if(h>=20){f.style.height=h+'px';s.classList.add('on');}else{s.classList.remove('on');}
+    });
+  });
 })();
 </script>
 </body>

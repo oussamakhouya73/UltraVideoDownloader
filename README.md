@@ -25,6 +25,21 @@ Files are saved in `Downloads/UltraVideoDownloader`. On Windows, if SmartScreen 
 
 GitHub → **Actions → Build apps → Run workflow**, enter a tag such as `v1.1.0`. Windows, macOS and Linux apps are built and attached to the release.
 
+### Ads
+
+Ad code is third-party, so it never runs inside the app page. Instead the website hosts two tiny frames and both the website and the app embed them:
+
+- `ads/banner.html`: desktop banner (728x90)
+- `ads/banner-small.html`: phone banner (320x50)
+
+Paste the banner code from your ad network inside the `#ad` div of each file and push. The change is live on the website **and inside the app at once, with no new release**. While a frame is empty, its slot stays collapsed and invisible.
+
+Slots: two on the website (under the device list, above the footer) and one in the app (under the download box).
+
+Rules to keep your account safe: banners only inside these frames (no popunder or social bar in the app), never click your own ads or ask others to, keep the number of ads low, and add a contact email to `privacy.html` before applying to a network. Visitors from the EU/UK may need a consent banner: check your network's requirements.
+
+The app only accepts API calls from itself (`127.0.0.1`), and its Content-Security-Policy only allows a frame from `SITE_URL` in `backend/app.py`. If you move to a custom domain, change `SITE_URL` (and the `SITE` constant in `app.html`) and publish a new release.
+
 ### Run from source
 
 ```

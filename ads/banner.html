@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Advertisement</title>
+<style>html,body{margin:0;padding:0;background:transparent;overflow:hidden}#ad{display:flex;justify-content:center}</style>
+</head>
+<body>
+<div id="ad">
+<!--
+  PASTE HERE the 728x90 BANNER code from your ad network.
+  Banner ads only. Do not paste popunder or social-bar code: this frame is shown inside the app.
+  While this area is empty, the ad slot stays collapsed and invisible.
+-->
+</div>
+<script>
+// Tells the page around this frame how tall the ad is, so empty slots stay hidden.
+(function(){
+  var box=document.getElementById('ad'),last=-1;
+  function report(){
+    var h=Math.ceil(box.getBoundingClientRect().height);
+    if(h!==last){last=h;parent.postMessage({uvdAd:true,height:h},'*');}
+  }
+  if(window.ResizeObserver)new ResizeObserver(report).observe(box);
+  window.addEventListener('load',report);
+  var n=0,t=setInterval(function(){report();if(++n>40)clearInterval(t)},500);
+  report();
+})();
+</script>
+</body>
+</html>

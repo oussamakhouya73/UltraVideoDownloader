@@ -45,6 +45,10 @@ select{width:100%;font:inherit;font-size:16px;padding:13px 12px;color:var(--ink)
 .notice.show{display:block}
 .footnote{margin:34px 0 0;font-size:13px;opacity:.75;max-width:46em}
 .footnote .mini{margin:10px 0 0;color:var(--ink);display:block}
+.adslot{height:0;overflow:hidden;text-align:center}
+.adslot.on{height:auto;padding-top:28px}
+.adslot .adlabel{display:block;margin:0 0 8px;font-size:12px;opacity:.6}
+.adslot iframe{display:block;width:100%;max-width:728px;height:300px;border:0;margin:0 auto}
 @media(max-width:560px){.urlrow{flex-direction:column}.urlrow input{border-right:3px solid var(--ink);border-bottom:0}.btn{padding:15px}.options{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.bar>i{transition:none}}
 </style>
@@ -63,6 +67,7 @@ select{width:100%;font:inherit;font-size:16px;padding:13px 12px;color:var(--ink)
 <p class="hint">The video itself has to offer the quality you pick. If it does not, you get the closest lower one.</p>
 <div class="progress" id="progress"><div class="bar"><i id="barfill"></i></div><div class="pinfo"><span id="pstate">Starting…</span><span id="pdetail"></span></div></div>
 <div class="notice" id="notice" role="status"></div>
+<div class="adslot" data-slot="app"><span class="adlabel">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div>
 <p class="footnote">Downloads happen on this computer with your own connection, so there is no limit on length or size. Only download videos you own or have permission to save.<button class="mini" id="quit">Quit the app</button></p>
 </main>
 <script>
@@ -125,6 +130,23 @@ document.getElementById('format').addEventListener('change',e=>{
  const q=document.getElementById('quality');q.disabled=e.target.value==='mp3';q.style.opacity=q.disabled?'.5':'1';
 });
 input.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click()});
+</script>
+<script>
+// Ad slot: the ad lives in a frame hosted on our website (a different origin from this app), so ad code cannot touch the app.
+(function(){
+  var SITE='https://ultravideodownloader.oussamakhouya73.workers.dev';
+  var file=innerWidth>=760?'banner.html':'banner-small.html';
+  var slots=[].slice.call(document.querySelectorAll('.adslot'));
+  slots.forEach(function(s){s.querySelector('iframe').src=SITE+'/ads/'+file+'?s='+s.getAttribute('data-slot');});
+  addEventListener('message',function(e){
+    if(e.origin!==SITE||!e.data||!e.data.uvdAd)return;
+    slots.forEach(function(s){
+      var f=s.querySelector('iframe');if(f.contentWindow!==e.source)return;
+      var hh=Math.max(0,Math.min(300,+e.data.height||0));
+      if(hh>=20){f.style.height=hh+'px';s.classList.add('on');}else{s.classList.remove('on');}
+    });
+  });
+})();
 </script>
 </body>
 </html>
