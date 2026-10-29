@@ -15,6 +15,7 @@ Environment variables:
 import os
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import threading
@@ -29,6 +30,12 @@ from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
 
 FROZEN = getattr(sys, "frozen", False)  # True inside the packaged app
+
+# A windowed Windows app has no console: stdout/stderr are None and printing would crash.
+for _stream in ("stdout", "stderr"):
+    if getattr(sys, _stream) is None:
+        setattr(sys, _stream, open(os.devnull, "w"))
+
 if FROZEN:
     # Packaged app: index.html is bundled; save files in the user's Downloads folder.
     FRONTEND_DIR = Path(sys._MEIPASS)
@@ -213,7 +220,14 @@ def run_job(job_id, url, media_format, quality):
 
 @app.get("/")
 def index():
-    return send_from_directory(FRONTEND_DIR, "index.html")
+    return send_from_directory(FRONTEND_DIR, "app.html")
+
+
+@app.post("/api/quit")
+def quit_app():
+    """Stops the helper (used by the Quit button when there is no app window)."""
+    threading.Timer(0.3, lambda: os._exit(0)).start()
+    return jsonify({"ok": True})
 
 
 @app.get("/api/health")
@@ -295,13 +309,51 @@ def job_file(job_id):
     )
 
 
+def port_in_use(host, port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.5)
+        return s.connect_ex((host, port)) == 0
+
+
+def open_window(url):
+    """Shows the app in its own window (Windows). Returns False if that is not possible."""
+    if not (FROZEN and sys.platform.startswith("win")):
+        return False
+    try:
+        import webview  # pywebview, uses the Edge WebView2 runtime built into Windows
+
+        webview.create_window("UltraVideoDownloader", url, width=1000, height=820, min_size=(420, 600))
+        webview.start()  # blocks until the window is closed
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "10000"))
     host = os.environ.get("UVD_HOST", "127.0.0.1")
-    print(f"UltraVideoDownloader running on http://{host}:{port}")
+    url = f"http://127.0.0.1:{port}"
+    auto_open = os.environ.get("UVD_OPEN_BROWSER", "1" if FROZEN else "0") == "1"
+
+    if port_in_use(host, port):
+        # The app is already running: just show it again.
+        if auto_open:
+            webbrowser.open(url)
+        sys.exit(0)
+
+    print(f"UltraVideoDownloader running on {url}")
     print(f"Files are saved in: {DOWNLOAD_DIR}")
-    if os.environ.get("UVD_OPEN_BROWSER", "1" if FROZEN else "0") == "1":
-        # Open the public website (it connects back to this helper); fall back to the local page.
-        open_url = os.environ.get("UVD_OPEN_URL") or (SITE_ORIGINS[0] if SITE_ORIGINS else f"http://localhost:{port}")
-        threading.Timer(1.5, webbrowser.open, args=(open_url,)).start()
-    app.run(host=host, port=port, threaded=True)
+
+    if not auto_open:
+        app.run(host=host, port=port, threaded=True)
+    else:
+        threading.Thread(
+            target=lambda: app.run(host=host, port=port, threaded=True), daemon=True
+        ).start()
+        time.sleep(1.0)
+        if open_window(url):
+            sys.exit(0)  # window closed -> quit
+        # No window available (macOS/Linux, or WebView2 missing): use the default browser.
+        webbrowser.open(url)
+        while True:  # keep serving until the Quit button / Ctrl+C
+            time.sleep(3600)
