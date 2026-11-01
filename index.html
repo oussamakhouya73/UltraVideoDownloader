@@ -6,9 +6,11 @@
 <meta name="theme-color" content="#2b35d1">
 <meta name="description" content="UltraVideoDownloader is a free app that downloads videos in HD and 4K with no size limit and no length limit.">
 <title>UltraVideoDownloader</title>
+<link rel="icon" href="/assets/icon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --blue:#2b35d1;
@@ -98,7 +100,19 @@ footer a{text-underline-offset:4px}
   h1 .line{animation:none;background-size:100% 100%}
   .btn{transition:none}
 }
+
+/* language switcher + right-to-left + Arabic */
+.bar .tools{display:flex;align-items:center;gap:16px}
+#lang{font:inherit;font-size:14px;font-weight:600;color:var(--chalk);background:transparent;border:2px solid var(--chalk);padding:5px 8px;border-radius:0;cursor:pointer}
+#lang option{color:#0e1240}
+:root[lang=ar]{--font:"Noto Sans Arabic","Inter",ui-sans-serif,system-ui,"Segoe UI",sans-serif}
+:root[lang=ar] *{letter-spacing:0!important}
+:root[lang=ar] h1{line-height:1.15}
+:root[lang=ar] h1 .line{color:var(--chalk);-webkit-text-stroke:0;background:none;animation:none;margin-bottom:0;padding:0}
+[dir=rtl] .hero .star{right:auto;left:-140px}
+.row .get a.alt{font-weight:500}
 </style>
+<script src="/site-config.js"></script>
 </head>
 <body>
 
@@ -113,82 +127,75 @@ footer a{text-underline-offset:4px}
   <div class="wrap">
     <div class="bar">
       <a class="brand" href="/">UltraVideoDownloader</a>
+      <div class="tools"><a class="gh" href="https://github.com/oussamakhouya73/UltraVideoDownloader">GitHub</a><select id="lang" aria-label="Language"></select></div>
     </div>
     <div class="hero-body">
-      <h1><span class="line">Any video.</span><span class="line">Any length.</span><span class="line">Any size.</span></h1>
-      <p class="lede">UltraVideoDownloader saves videos in HD or 4K. It runs on your own computer, so nothing is uploaded to a server and nothing is capped.</p>
+      <h1><span class="line" data-i="h1_1">Any video.</span><span class="line" data-i="h1_2">Any length.</span><span class="line" data-i="h1_3">Any size.</span></h1>
+      <p class="lede" data-i="lede">UltraVideoDownloader saves videos in the best quality they offer. It runs on your own computer, so nothing is uploaded to a server and nothing is capped.</p>
       <div class="cta">
-        <a class="btn" id="main-dl" href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-windows.zip">Download for Windows</a>
-        <a class="other" href="#devices">Other devices</a>
+        <a class="btn" id="main-dl" href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-Setup.exe" data-i="dl_win">Download for Windows</a>
+        <a class="other" href="#devices" data-i="other">Other devices</a>
       </div>
-      <p class="fine">Free. About 50 MB. Unzip it and open it, there is nothing to install. If Windows shows a blue warning, choose More info, then Run anyway.</p>
+      <p class="fine" data-i="fine">Free. Run the installer and you get a desktop icon and a Start menu entry. Windows may show a blue warning because the app is new: choose More info, then Run anyway.</p>
     </div>
   </div>
 </div>
 
 <section id="devices">
   <div class="wrap">
-    <h2>Pick your device</h2>
+    <h2 data-i="devices_h">Pick your device</h2>
     <div class="rows">
       <div class="row main">
         <h3>Windows</h3>
-        <p>Opens in its own window. Windows 10 and 11.</p>
-        <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-windows.zip">Download the zip</a></div>
+        <p data-i="win_p">Own window, own icon, updates itself. Windows 10 and 11.</p>
+        <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-Setup.exe" data-platform="win" data-i="win_get">Download the installer</a><a class="alt" href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-windows.zip" data-platform="win-zip" data-i="win_zip">Portable zip</a></div>
       </div>
       <div class="row">
         <h3>Android</h3>
-        <p>These two free, open-source apps do the same job on your phone.</p>
+        <p data-i="and_p">Our own Android app is coming. Until then, these free, open-source apps do the same job.</p>
         <div class="get"><a href="https://github.com/deniscerri/ytdlnis/releases/latest">YTDLnis</a><a href="https://github.com/JunkFood02/Seal/releases/latest">Seal</a></div>
       </div>
       <div class="row">
         <h3>macOS</h3>
-        <p>Opens in your browser. The first time, right-click the file and choose Open.</p>
-        <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-macos.zip">Download the zip</a></div>
+        <p data-i="mac_p">Opens in your browser. The first time, right-click the file and choose Open.</p>
+        <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-macos.zip" data-platform="mac" data-i="dl_zip">Download the zip</a></div>
       </div>
       <div class="row">
         <h3>Linux</h3>
-        <p>Opens in your browser. Make the file executable with chmod +x, then run it.</p>
-        <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-linux.zip">Download the zip</a></div>
+        <p data-i="linux_p">Opens in your browser. Make the file executable with chmod +x, then run it.</p>
+        <div class="get"><a href="https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/UltraVideoDownloader-linux.zip" data-platform="linux" data-i="dl_zip">Download the zip</a></div>
       </div>
     </div>
-    <div class="adslot" data-slot="devices"><span class="adlabel">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div>
+    <div class="adslot" data-slot="devices"><span class="adlabel" data-i="ad">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div>
   </div>
 </section>
 
 <section class="steps">
   <div class="wrap grid">
-    <h2>Three steps</h2>
+    <h2 data-i="steps_h">Three steps</h2>
     <ol>
-      <li><div><b>Download and unzip</b><span>Pick your device above. Unzip the file anywhere you like.</span></div></li>
-      <li><div><b>Open the app</b><span>Double-click it. A window opens with an empty link box.</span></div></li>
-      <li><div><b>Paste a link and press Download</b><span>Choose the quality, up to 4K, or audio only as MP3. You see the speed and the time left. The file lands in Downloads, in the UltraVideoDownloader folder.</span></div></li>
+      <li><div><b data-i="s1b">Download and install</b><span data-i="s1t">Pick your device above and open the file. On Windows the installer adds a desktop shortcut.</span></div></li>
+      <li><div><b data-i="s2b">Open the app</b><span data-i="s2t">A window opens with an empty link box. Light and dark themes are built in.</span></div></li>
+      <li><div><b data-i="s3b">Paste a link and press Download</b><span data-i="s3t">The app checks the link and shows the video. It picks the best quality the video really has. Press Save to… to choose the folder. You can pause, and it continues where it stopped, even after the internet drops or you close the app.</span></div></li>
     </ol>
   </div>
 </section>
 
 <section>
   <div class="wrap plain">
-    <div><h3>Up to 4K</h3><p>You choose the quality. The video itself must offer it.</p></div>
-    <div><h3>Many gigabytes is fine</h3><p>Your computer does the work, so there is no limit on length or file size.</p></div>
-    <div><h3>Your links stay with you</h3><p>No account. Nothing you paste is sent to our servers.</p></div>
+    <div><h3 data-i="f1h">The real best quality</h3><p data-i="f1p">If a video has 720p, you get 720p. If it has 4K, you get 4K. You can still pick a lower one.</p></div>
+    <div><h3 data-i="f2h">Many gigabytes is fine</h3><p data-i="f2p">Your computer does the work, so there is no limit on length or file size.</p></div>
+    <div><h3 data-i="f3h">Your links stay with you</h3><p data-i="f3p">No account. Nothing you paste is sent to us. The app only counts anonymous usage, and you can switch that off in Settings.</p></div>
   </div>
 </section>
 
-<div class="wrap"><div class="adslot" data-slot="bottom"><span class="adlabel">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div></div>
+<div class="wrap"><div class="adslot" data-slot="bottom"><span class="adlabel" data-i="ad">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div></div>
 
 <footer>
-  <div class="wrap">Use it for videos you own or have permission to download. The rules of the site a video comes from still apply. <a href="/privacy.html">Privacy</a>.</div>
+  <div class="wrap"><span data-i="foot">Use it for videos you own or have permission to download. The rules of the site a video comes from still apply.</span> <a href="/privacy.html" data-i="privacy">Privacy</a></div>
 </footer>
 
-<script>
-// Offer the right download for the visitor's system.
-(function(){
-  var ua=navigator.userAgent||'',b=document.getElementById('main-dl'),base='https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest/download/';
-  if(/Android/i.test(ua)){b.textContent='Get the Android app';b.href='https://github.com/deniscerri/ytdlnis/releases/latest'}
-  else if(/Mac/i.test(ua)&&!/iPhone|iPad/i.test(ua)){b.textContent='Download for macOS';b.href=base+'UltraVideoDownloader-macos.zip'}
-  else if(/Linux/i.test(ua)){b.textContent='Download for Linux';b.href=base+'UltraVideoDownloader-linux.zip'}
-})();
-</script>
+<script src="/site.js"></script>
 
 <script>
 // Ad slots: each one loads a small frame from /ads/ and opens only when that frame reports a real ad.

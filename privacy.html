@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacy · UltraVideoDownloader</title>
+<link rel="icon" href="/assets/icon-64.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--blue:#2b35d1;--ink:#0e1240;--chalk:#f6f7fb;--font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
@@ -22,29 +23,41 @@ p{margin:0 0 12px}
 .updated{opacity:.7;font-size:15px}
 a{text-underline-offset:4px}
 :focus-visible{outline:3px solid #f7b500;outline-offset:3px}
+header div{display:flex;justify-content:space-between;align-items:center}
+#lang{font:inherit;font-size:14px;font-weight:600;color:var(--chalk);background:transparent;border:2px solid var(--chalk);padding:5px 8px;border-radius:0}
+#lang option{color:#0e1240}
+:root[lang=ar]{--font:"Noto Sans Arabic","Inter",ui-sans-serif,system-ui,"Segoe UI",sans-serif}
+:root[lang=ar] *{letter-spacing:0!important}
 </style>
+<script src="/site-config.js"></script>
 </head>
 <body>
-<header><div><a href="/">UltraVideoDownloader</a></div></header>
+<header><div><a href="/">UltraVideoDownloader</a><select id="lang" aria-label="Language"></select></div></header>
 <main>
-<h1>Privacy</h1>
-<p class="updated">Last updated: October 2026</p>
+<h1 id="p-title" data-i="p_title">Privacy</h1>
+<p class="updated" data-i="p_updated">Last updated: November 2026</p>
 
-<h2>The app</h2>
-<p>UltraVideoDownloader runs on your own device. The links you paste and the videos you save stay on your device. We do not run a server that receives your links, and we do not ask you to create an account.</p>
+<h2 data-i="p1h">The app</h2>
+<p data-i="p1p">UltraVideoDownloader runs on your own device. The links you paste and the videos you save stay on your device. We do not run a server that receives your links, and we do not ask you to create an account.</p>
 
-<h2>Ads</h2>
-<p>This website and the app show ads from third-party advertising networks. These networks can use cookies and similar identifiers to show ads and to measure them. They may collect information such as your IP address, browser type and the pages you view. We do not control what they collect. Please read the privacy policy of the network that serves the ad you see.</p>
-<p>Ads are shown in a separate frame, so the ad code cannot read the links you paste.</p>
+<h2 data-i="p2h">Anonymous usage statistics</h2>
+<p data-i="p2p">To know how many people use the app and to fix problems, the app sends a few anonymous facts: a random install number (not linked to you), the app version, your operating system, your language, your country (worked out from your IP address, which is not stored), how long the app stays open, and how many downloads started, finished or failed. It never sends the links you paste, video titles or file names. It is on by default, and you can switch it off any time in Settings. The website counts visits in the same anonymous way and uses no cookies. We use PostHog to process these statistics.</p>
 
-<h2>Your choices</h2>
-<p>You can block or delete cookies in your browser settings, and you can use an ad blocker. The app works the same without ads.</p>
+<h2 data-i="p3h">Ads</h2>
+<p data-i="p3p">This website and the app show ads from third-party advertising networks. These networks can use cookies and similar identifiers to show ads and to measure them. They may collect information such as your IP address, browser type and the pages you view. We do not control what they collect. Please read the privacy policy of the network that serves the ad you see. Ads are shown in a separate frame, so the ad code cannot read the links you paste.</p>
 
-<h2>What the site itself collects</h2>
-<p>The website is a static page. It does not store personal information. The hosting provider may keep standard server logs, such as IP address and time of visit, for security and operation.</p>
+<h2 data-i="p4h">Your choices</h2>
+<p data-i="p4p">You can block or delete cookies in your browser settings, and you can use an ad blocker. The app works the same without ads. Turn off statistics in the app Settings.</p>
 
-<h2>Downloading content</h2>
-<p>Use the app only for videos you own or have permission to save. The terms of the site a video comes from still apply.</p>
+<h2 data-i="p5h">Hosting</h2>
+<p data-i="p5p">The website is a static page. The hosting provider may keep standard server logs, such as IP address and time of visit, for security and operation.</p>
+
+<h2 data-i="p6h">Downloading content</h2>
+<p data-i="p6p">Use the app only for videos you own or have permission to save. The terms of the site a video comes from still apply.</p>
+
+<h2 data-i="p7h">Contact</h2>
+<p><span data-i="p7p">Questions about privacy? Open an issue on our GitHub page.</span> <a href="https://github.com/oussamakhouya73/UltraVideoDownloader/issues" data-i="p7l">GitHub</a></p>
 </main>
+<script src="/site.js"></script>
 </body>
 </html>

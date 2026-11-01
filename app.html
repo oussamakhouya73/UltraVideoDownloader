@@ -1,140 +1,354 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#2b35d1">
 <title>UltraVideoDownloader</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--blue:#2b35d1;--ink:#0e1240;--saffron:#f7b500;--chalk:#f6f7fb;--font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+:root{--blue:#2b35d1;--saffron:#f7b500;--bg:#f6f7fb;--card:#fff;--ink:#0e1240;--line:#0e1240;--muted:#5b6080;--ok:#1f9d55;--bad:#c62828;--bar:#e3e6f3;--font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+:root[data-theme=dark]{--bg:#0b0d24;--card:#151838;--ink:#eef0ff;--line:#5a63e0;--muted:#a3a8d0;--bar:#262a55;--ok:#3ecf7e;--bad:#ff7b7b;color-scheme:dark}
+:root[lang=ar]{--font:"Noto Sans Arabic","Inter",ui-sans-serif,system-ui,"Segoe UI",sans-serif}
+:root[lang=ar] *{letter-spacing:0!important}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;font-family:var(--font);background:var(--chalk);color:var(--ink);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
-:focus-visible{outline:3px solid var(--saffron);outline-offset:3px}
-.top{background:var(--blue);color:var(--chalk)}
-.top .in{width:min(760px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:20px 0}
-.brand{font-weight:800;font-size:20px;letter-spacing:-.02em}
-.top button{font:inherit;font-size:14px;font-weight:600;color:var(--chalk);background:transparent;border:2px solid var(--chalk);padding:6px 12px;cursor:pointer}
-.top button:hover{background:var(--chalk);color:var(--blue)}
-main{width:min(760px,calc(100% - 32px));margin:0 auto;padding:36px 0 48px}
-h1{margin:0 0 22px;font-weight:800;font-size:clamp(34px,6vw,52px);line-height:1;letter-spacing:-.03em}
-.helper{margin:0 0 26px;padding:10px 14px;border:2px solid var(--ink);font-size:14px;background:#fff}
-.helper.ok{border-left:10px solid #1f9d55}
-.helper.bad{border-left:10px solid var(--saffron)}
-.label{display:block;font-weight:700;font-size:15px;margin:0 0 8px}
+body{margin:0;min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
+button,select,input{font:inherit;color:inherit}
+.top{background:var(--blue);color:#f6f7fb}
+.top .in{width:min(820px,calc(100% - 32px));margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand img{width:30px;height:30px}
+.tools{display:flex;gap:8px;align-items:center}
+.tools button,.tools select{font-size:14px;font-weight:600;color:#f6f7fb;background:transparent;border:2px solid #f6f7fb;padding:5px 10px;cursor:pointer;border-radius:0}
+.tools select option{color:#0e1240}
+.tools button:hover{background:#f6f7fb;color:var(--blue)}
+main{width:min(820px,calc(100% - 32px));margin:0 auto;padding:26px 0 40px}
+.banner{display:none;margin:0 0 18px;padding:12px 14px;border:3px solid var(--line);background:var(--saffron);color:#0e1240;font-weight:600;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.banner.show{display:flex}
+.banner.lost{background:var(--bad);color:#fff}
+.banner button{font-weight:800;background:#0e1240;color:#fff;border:0;padding:8px 16px;cursor:pointer}
+h1{margin:0 0 18px;font-weight:800;font-size:clamp(30px,5.5vw,46px);line-height:1.05;letter-spacing:-.03em}
+.label{display:block;font-weight:700;font-size:14px;margin:0 0 6px}
 .urlrow{display:flex}
-.urlrow input{min-width:0;flex:1;font:inherit;font-size:18px;padding:16px;color:var(--ink);background:#fff;border:3px solid var(--ink);border-right:0;border-radius:0;outline-offset:0}
-.urlrow input:focus{outline:3px solid var(--saffron);outline-offset:-3px}
-.btn{font:inherit;font-weight:800;font-size:18px;color:var(--ink);background:var(--saffron);border:3px solid var(--ink);border-radius:0;padding:0 28px;cursor:pointer}
+.urlrow input{min-width:0;flex:1;font-size:17px;padding:14px;background:var(--card);border:3px solid var(--line);border-inline-end:0;border-radius:0}
+.btn{font-weight:800;font-size:17px;color:#0e1240;background:var(--saffron);border:3px solid var(--line);border-radius:0;padding:0 24px;cursor:pointer}
 .btn:hover{background:#ffc82e}
-.btn:disabled{opacity:.6;cursor:wait}
-.options{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
-select{width:100%;font:inherit;font-size:16px;padding:13px 12px;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:0}
-.hint{margin:12px 0 0;font-size:14px;opacity:.75}
-.progress{display:none;margin-top:30px;padding-top:24px;border-top:3px solid var(--ink)}
-.progress.show{display:block}
-.bar{height:22px;background:#fff;border:3px solid var(--ink)}
-.bar>i{display:block;height:100%;width:0;background:var(--blue);transition:width .4s}
-.pinfo{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px}
-#pstate{font-weight:800;font-size:clamp(24px,4vw,34px);line-height:1.1;letter-spacing:-.02em;overflow-wrap:anywhere}
-#pdetail{font-size:15px;align-self:flex-end}
-.mini{font:inherit;font-weight:700;margin-left:10px;color:var(--blue);background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
-.notice{display:none;margin-top:22px;padding:14px 16px;border:3px solid var(--ink);background:var(--saffron);font-weight:500}
-.notice.show{display:block}
-.footnote{margin:34px 0 0;font-size:13px;opacity:.75;max-width:46em}
-.footnote .mini{margin:10px 0 0;color:var(--ink);display:block}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.msg{display:none;margin-top:12px;padding:10px 14px;border:3px solid var(--line);background:var(--card);font-weight:500}
+.msg.show{display:block}
+.msg.bad{border-color:var(--bad)}
+.preview{display:none;margin-top:18px;border:3px solid var(--line);background:var(--card)}
+.preview.show{display:block}
+.pv-head{display:flex;gap:14px;padding:14px}
+.pv-head img,.thumb{width:168px;aspect-ratio:16/9;object-fit:cover;background:var(--bar);flex:none;display:block}
+.pv-title{font-weight:800;font-size:18px;line-height:1.25;overflow-wrap:anywhere}
+.meta{font-size:14px;color:var(--muted);margin-top:4px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 14px 14px}
+select{width:100%;padding:11px 10px;background:var(--card);border:3px solid var(--line);border-radius:0}
+.saveto{display:flex;gap:10px;align-items:center;padding:0 14px 14px}
+.saveto .path{flex:1;min-width:0;font-size:14px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:start}
+.small{font-weight:700;font-size:14px;background:var(--card);border:3px solid var(--line);padding:8px 14px;cursor:pointer;border-radius:0}
+.small:hover{background:var(--bar)}
+.go{display:block;width:calc(100% - 28px);margin:0 14px 14px;padding:14px;font-size:18px}
+h2{font-size:20px;font-weight:800;margin:30px 0 12px}
+.empty{color:var(--muted);font-size:15px;margin:0}
+.job{display:flex;gap:14px;padding:12px;margin-bottom:12px;border:3px solid var(--line);background:var(--card)}
+.job .thumb{width:128px}
+.job .body{flex:1;min-width:0}
+.job .ttl{font-weight:700;overflow-wrap:anywhere;line-height:1.3}
+.bar{height:12px;margin:10px 0 6px;background:var(--bar)}
+.bar>i{display:block;height:100%;width:0;background:var(--blue);transition:width .5s}
+:root[data-theme=dark] .bar>i{background:var(--saffron)}
+.job.done .bar>i{background:var(--ok)}
+.job.error .bar>i{background:var(--bad)}
+.job.waiting .bar>i,.job.paused .bar>i{background:var(--muted)}
+.st{font-size:14px;font-weight:600;unicode-bidi:plaintext}
+.job.error .st{color:var(--bad)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.acts .small{padding:5px 12px;font-size:13px}
 .adslot{height:0;overflow:hidden;text-align:center}
-.adslot.on{height:auto;padding-top:28px}
-.adslot .adlabel{display:block;margin:0 0 8px;font-size:12px;opacity:.6}
-.adslot iframe{display:block;width:100%;max-width:728px;height:300px;border:0;margin:0 auto}
-@media(max-width:560px){.urlrow{flex-direction:column}.urlrow input{border-right:3px solid var(--ink);border-bottom:0}.btn{padding:15px}.options{grid-template-columns:1fr}}
+.adslot.on{height:auto;padding-top:26px}
+.adslot .adlabel{display:block;margin:0 0 8px;font-size:12px;color:var(--muted)}
+.adslot iframe{display:block;width:100%;max-width:728px;height:300px;border:0;margin:0 auto;color-scheme:normal}
+.foot{margin:30px 0 0;font-size:13px;color:var(--muted);max-width:46em}
+dialog{border:3px solid var(--line);background:var(--card);color:var(--ink);padding:22px;width:min(440px,calc(100% - 32px))}
+dialog::backdrop{background:rgba(5,6,30,.6)}
+dialog h3{margin:0 0 14px;font-size:20px}
+dialog label.row{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;font-weight:500}
+dialog label.row input{margin-top:5px;width:18px;height:18px;flex:none}
+dialog .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+@media(max-width:560px){.urlrow{flex-direction:column}.urlrow input{border-inline-end:3px solid var(--line);border-bottom:0}.btn{padding:14px}.pv-head{flex-direction:column}.pv-head img{width:100%}.opts{grid-template-columns:1fr}.job .thumb{width:90px}.brand span{display:none}}
 @media(prefers-reduced-motion:reduce){.bar>i{transition:none}}
 </style>
 </head>
 <body>
-<header class="top"><div class="in"><span class="brand">UltraVideoDownloader</span></div></header>
+<header class="top"><div class="in">
+ <div class="brand"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fff'/%3E%3Cpath d='M32 12v26m-11-9 11 11 11-11' stroke='%232b35d1' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='16' y='48' width='32' height='6' rx='3' fill='%23f7b500'/%3E%3C/svg%3E" alt=""><span>UltraVideoDownloader</span></div>
+ <div class="tools">
+  <select id="lang" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option><option value="fr">Français</option><option value="es">Español</option></select>
+  <button id="themeBtn" type="button"></button>
+  <button id="setBtn" type="button" data-i="settings"></button>
+ </div>
+</div></header>
 <main>
-<h1>Paste a link.</h1>
-<div class="helper" id="helper">Checking the app…</div>
-<label class="label" for="url">Video link</label>
-<div class="urlrow"><input id="url" type="url" placeholder="https://" autocomplete="url"><button class="btn" id="prepare">Download</button></div>
-<div class="options">
-<div><label class="label" for="quality">Quality</label><select id="quality"><option value="best">Best available</option><option value="2160">2160p, 4K</option><option value="1440">1440p, 2K</option><option value="1080" selected>1080p, Full HD</option><option value="720">720p, HD</option><option value="480">480p</option><option value="360">360p</option></select></div>
-<div><label class="label" for="format">Format</label><select id="format"><option value="mp4">MP4, video</option><option value="mp3">MP3, audio only</option></select></div>
-</div>
-<p class="hint">The video itself has to offer the quality you pick. If it does not, you get the closest lower one.</p>
-<div class="progress" id="progress"><div class="bar"><i id="barfill"></i></div><div class="pinfo"><span id="pstate">Starting…</span><span id="pdetail"></span></div></div>
-<div class="notice" id="notice" role="status"></div>
-<div class="adslot" data-slot="app"><span class="adlabel">Advertisement</span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div>
-<p class="footnote">Downloads happen on this computer with your own connection, so there is no limit on length or size. Only download videos you own or have permission to save.<button class="mini" id="quit">Quit the app</button></p>
+ <div class="banner" id="banner"><span id="bannerText"></span><button id="bannerBtn" type="button"></button></div>
+ <h1 data-i="title"></h1>
+ <label class="label" for="url" data-i="link"></label>
+ <div class="urlrow"><input id="url" type="url" placeholder="https://" autocomplete="off" dir="ltr"><button class="btn" id="check" type="button" data-i="check"></button></div>
+ <div class="msg" id="msg" role="status"></div>
+
+ <section class="preview" id="preview">
+  <div class="pv-head"><img id="pvImg" alt=""><div><div class="pv-title" id="pvTitle"></div><div class="meta" id="pvMeta"></div></div></div>
+  <div class="opts">
+   <div><label class="label" for="quality" data-i="quality"></label><select id="quality"></select></div>
+   <div><label class="label" for="format" data-i="format"></label><select id="format"><option value="mp4" data-i="fmt_mp4"></option><option value="mp3" data-i="fmt_mp3"></option></select></div>
+  </div>
+  <div class="saveto"><button class="small" id="saveTo" type="button" data-i="saveto"></button><span class="path" id="pathText"></span></div>
+  <button class="btn go" id="go" type="button" data-i="download"></button>
+ </section>
+
+ <h2 data-i="downloads"></h2>
+ <div id="jobs"></div>
+ <p class="empty" id="none" data-i="none"></p>
+
+ <div class="adslot" data-slot="app"><span class="adlabel" data-i="ad"></span><iframe title="Advertisement" scrolling="no" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe></div>
+ <p class="foot" data-i="foot"></p>
 </main>
+
+<dialog id="dlg">
+ <h3 data-i="settings"></h3>
+ <label class="row"><input type="checkbox" id="stats"><span data-i="stats"></span></label>
+ <div class="meta" id="ver"></div>
+ <div class="links">
+  <button class="small" id="priv" type="button" data-i="privacy"></button>
+  <button class="small" id="quit" type="button" data-i="quit"></button>
+  <button class="small" id="close" type="button" data-i="close"></button>
+ </div>
+</dialog>
+
 <script>
-const REPO='https://github.com/oussamakhouya73/UltraVideoDownloader/releases/latest';
-const LOCAL='http://localhost:10000';
-const API='';
-const input=document.getElementById('url'),notice=document.getElementById('notice'),btn=document.getElementById('prepare'),helper=document.getElementById('helper');
-const prog=document.getElementById('progress'),fill=document.getElementById('barfill'),pstate=document.getElementById('pstate'),pdetail=document.getElementById('pdetail');
-const api=(path,opts={})=>fetch(API+path,API?{targetAddressSpace:'local',...opts}:opts);
-const fmtBytes=n=>{if(!n)return'';const u=['B','KB','MB','GB','TB'];let i=0;while(n>=1024&&i<u.length-1){n/=1024;i++}return n.toFixed(i?1:0)+' '+u[i]};
-const fmtTime=s=>{if(s==null)return'';s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return(h?h+'h ':'')+(h||m?m+'m ':'')+r+'s'};
-function say(msg){notice.textContent=msg;notice.classList.add('show')}
-let connected=false;
-async function checkHelper(){
- try{
-  const r=await api('/api/health');const j=await r.json();
-  connected=true;helper.className='helper ok';
-  helper.textContent='Ready. Files are saved in: '+j.folder;
- }catch{
-  connected=false;helper.className='helper bad';
-  helper.textContent='The app is not running anymore. Open UltraVideoDownloader again.';
- }
+const T={
+en:{settings:'Settings',title:'Paste a link.',link:'Video link',check:'Check',quality:'Quality',format:'Format',fmt_mp4:'MP4, video',fmt_mp3:'MP3, audio only',saveto:'Save to…',download:'Download',downloads:'Downloads',none:'No downloads yet.',ad:'Advertisement',foot:'Downloads happen on this computer with your own connection, so there is no limit on length or size. Only download videos you own or have permission to save.',stats:'Send anonymous usage statistics (no links, titles or files).',privacy:'Privacy',quit:'Quit the app',close:'Close',
+ best:'Best available',theme_system:'Theme: auto',theme_light:'Theme: light',theme_dark:'Theme: dark',checking:'Checking the link…',bad_url:'That does not look like a valid link. Include https://',
+ pause:'Pause',resume:'Resume',cancel:'Cancel',retry:'Retry',remove:'Remove',show:'Show in folder',
+ s_queued:'Waiting in line…',s_downloading:'Downloading',s_processing:'Finishing the file…',s_waiting:'No internet. Will continue by itself…',s_paused:'Paused',s_done:'Done',s_error:'Failed',
+ folder_prompt:'Type the full path of the folder:',folder_bad:'This folder cannot be used.',
+ update_new:'New version available: ',update_btn:'Update',update_down:'Downloading the update…',update_inst:'Installing the update…',update_fail:'The update failed. Try again later.',
+ lost:'The app was closed or stopped.',closed:'The app was closed. You can close this window.',
+ e_invalid_url:'That link is not valid.',e_playlist:'This is a playlist. Paste the link of a single video.',e_live:'Live streams cannot be saved yet.',e_unsupported:'This website is not supported.',e_private:'This video is private or needs a login.',e_blocked:'The site blocked the request. Try again later.',e_unavailable:'This video is not available.',e_ffmpeg:'Could not merge the file.',e_disk:'The disk is full.',e_network:'Internet problem. Try again.',e_failed:'Something went wrong.',e_folder:'This folder cannot be used.',
+ live:'live',min:'min'},
+ar:{settings:'الإعدادات',title:'لصق الرابط.',link:'رابط الفيديو',check:'تحقق',quality:'الجودة',format:'الصيغة',fmt_mp4:'MP4 فيديو',fmt_mp3:'MP3 صوت فقط',saveto:'حفظ في…',download:'تنزيل',downloads:'التنزيلات',none:'ما كاين حتى تنزيل دابا.',ad:'إعلان',foot:'التنزيل كيتم على هاد الجهاز وبالإنترنت ديالك، لهذا ماكاين حتى حد للطول ولا الحجم. نزّل غير الفيديوهات اللي ديالك ولا عندك الإذن باش تحفظها.',stats:'إرسال إحصائيات استعمال مجهولة (بلا روابط ولا عناوين ولا ملفات).',privacy:'الخصوصية',quit:'إغلاق التطبيق',close:'إغلاق',
+ best:'أعلى جودة متاحة',theme_system:'المظهر: تلقائي',theme_light:'المظهر: فاتح',theme_dark:'المظهر: داكن',checking:'كنتحقق من الرابط…',bad_url:'هاد الرابط ما بانش صحيح. خصو يبدا بـ https://',
+ pause:'إيقاف مؤقت',resume:'استئناف',cancel:'إلغاء',retry:'إعادة المحاولة',remove:'حذف من اللائحة',show:'إظهار في المجلد',
+ s_queued:'كيتسنى دورو…',s_downloading:'جاري التنزيل',s_processing:'كنكمل الملف…',s_waiting:'ماكاينش الإنترنت. غادي يكمل بوحدو…',s_paused:'متوقف مؤقتا',s_done:'تم',s_error:'فشل',
+ folder_prompt:'كتب المسار الكامل للمجلد:',folder_bad:'هاد المجلد ما يمكنش يتستعمل.',
+ update_new:'كاينة نسخة جديدة: ',update_btn:'تحديث',update_down:'كنحمل التحديث…',update_inst:'كنركب التحديث…',update_fail:'التحديث فشل. عاود حاول من بعد.',
+ lost:'التطبيق تسد ولا وقف.',closed:'التطبيق تسد. تقدر تسد هاد النافذة.',
+ e_invalid_url:'الرابط ما صحيحش.',e_playlist:'هادي قائمة تشغيل. حط رابط فيديو واحد.',e_live:'البث المباشر ما كيتحفظش دابا.',e_unsupported:'هاد الموقع ما مدعومش.',e_private:'هاد الفيديو خاص ولا خاصو تسجيل الدخول.',e_blocked:'الموقع منع الطلب. عاود حاول من بعد.',e_unavailable:'هاد الفيديو ما كايناش.',e_ffmpeg:'ما قدرناش نجمعو الملف.',e_disk:'القرص عامر.',e_network:'مشكل فالإنترنت. عاود حاول.',e_failed:'وقع شي مشكل.',e_folder:'هاد المجلد ما يمكنش يتستعمل.',
+ live:'مباشر',min:'د'},
+fr:{settings:'Réglages',title:'Collez un lien.',link:'Lien de la vidéo',check:'Vérifier',quality:'Qualité',format:'Format',fmt_mp4:'MP4, vidéo',fmt_mp3:'MP3, audio seul',saveto:'Enregistrer dans…',download:'Télécharger',downloads:'Téléchargements',none:'Aucun téléchargement pour le moment.',ad:'Publicité',foot:'Les téléchargements se font sur cet ordinateur avec votre propre connexion : aucune limite de durée ni de taille. Ne téléchargez que des vidéos qui vous appartiennent ou que vous avez le droit de garder.',stats:'Envoyer des statistiques d’usage anonymes (jamais de liens, titres ou fichiers).',privacy:'Confidentialité',quit:'Quitter l’appli',close:'Fermer',
+ best:'Meilleure qualité disponible',theme_system:'Thème : auto',theme_light:'Thème : clair',theme_dark:'Thème : sombre',checking:'Vérification du lien…',bad_url:'Ce lien semble invalide. Ajoutez https://',
+ pause:'Pause',resume:'Reprendre',cancel:'Annuler',retry:'Réessayer',remove:'Retirer',show:'Afficher dans le dossier',
+ s_queued:'En file d’attente…',s_downloading:'Téléchargement',s_processing:'Finalisation du fichier…',s_waiting:'Pas d’internet. Reprise automatique…',s_paused:'En pause',s_done:'Terminé',s_error:'Échec',
+ folder_prompt:'Saisissez le chemin complet du dossier :',folder_bad:'Ce dossier est inutilisable.',
+ update_new:'Nouvelle version disponible : ',update_btn:'Mettre à jour',update_down:'Téléchargement de la mise à jour…',update_inst:'Installation de la mise à jour…',update_fail:'La mise à jour a échoué. Réessayez plus tard.',
+ lost:'L’appli a été fermée ou arrêtée.',closed:'L’appli est fermée. Vous pouvez fermer cette fenêtre.',
+ e_invalid_url:'Ce lien n’est pas valide.',e_playlist:'C’est une playlist. Collez le lien d’une seule vidéo.',e_live:'Les directs ne peuvent pas encore être enregistrés.',e_unsupported:'Ce site n’est pas pris en charge.',e_private:'Cette vidéo est privée ou demande une connexion.',e_blocked:'Le site a bloqué la requête. Réessayez plus tard.',e_unavailable:'Cette vidéo n’est pas disponible.',e_ffmpeg:'Impossible d’assembler le fichier.',e_disk:'Le disque est plein.',e_network:'Problème de connexion. Réessayez.',e_failed:'Un problème est survenu.',e_folder:'Ce dossier est inutilisable.',
+ live:'direct',min:'min'},
+es:{settings:'Ajustes',title:'Pega un enlace.',link:'Enlace del vídeo',check:'Comprobar',quality:'Calidad',format:'Formato',fmt_mp4:'MP4, vídeo',fmt_mp3:'MP3, solo audio',saveto:'Guardar en…',download:'Descargar',downloads:'Descargas',none:'Aún no hay descargas.',ad:'Publicidad',foot:'Las descargas se hacen en este equipo con tu propia conexión, así que no hay límite de duración ni de tamaño. Descarga solo vídeos tuyos o que tengas permiso para guardar.',stats:'Enviar estadísticas de uso anónimas (nunca enlaces, títulos ni archivos).',privacy:'Privacidad',quit:'Cerrar la app',close:'Cerrar',
+ best:'Mejor calidad disponible',theme_system:'Tema: auto',theme_light:'Tema: claro',theme_dark:'Tema: oscuro',checking:'Comprobando el enlace…',bad_url:'Ese enlace no parece válido. Incluye https://',
+ pause:'Pausar',resume:'Reanudar',cancel:'Cancelar',retry:'Reintentar',remove:'Quitar',show:'Mostrar en la carpeta',
+ s_queued:'En cola…',s_downloading:'Descargando',s_processing:'Terminando el archivo…',s_waiting:'Sin internet. Continuará solo…',s_paused:'En pausa',s_done:'Listo',s_error:'Error',
+ folder_prompt:'Escribe la ruta completa de la carpeta:',folder_bad:'No se puede usar esa carpeta.',
+ update_new:'Nueva versión disponible: ',update_btn:'Actualizar',update_down:'Descargando la actualización…',update_inst:'Instalando la actualización…',update_fail:'La actualización falló. Inténtalo más tarde.',
+ lost:'La app se cerró o se detuvo.',closed:'La app se cerró. Puedes cerrar esta ventana.',
+ e_invalid_url:'Ese enlace no es válido.',e_playlist:'Es una lista de reproducción. Pega el enlace de un solo vídeo.',e_live:'Las emisiones en directo aún no se pueden guardar.',e_unsupported:'Este sitio no es compatible.',e_private:'Este vídeo es privado o requiere iniciar sesión.',e_blocked:'El sitio bloqueó la solicitud. Inténtalo más tarde.',e_unavailable:'Este vídeo no está disponible.',e_ffmpeg:'No se pudo unir el archivo.',e_disk:'El disco está lleno.',e_network:'Problema de conexión. Inténtalo de nuevo.',e_failed:'Algo salió mal.',e_folder:'No se puede usar esa carpeta.',
+ live:'directo',min:'min'}};
+const SITE='https://ultravideodownloader.oussamakhouya73.workers.dev';
+const $=id=>document.getElementById(id);
+let S={language:null,theme:'system',download_dir:'',stats:true,version:''};
+let lang='en',info=null,infoUrl='';
+const t=k=>(T[lang]&&T[lang][k])||T.en[k]||k;
+const api=(p,body,method)=>fetch(p,body===undefined&&!method?{}:{method:method||'POST',headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});
+const post=(p,b)=>api(p,b,'POST');
+async function jget(p){const r=await fetch(p);return r.json()}
+
+function pickLang(){const l=S.language||(navigator.language||'en').slice(0,2).toLowerCase();return T[l]?l:'en'}
+function applyLang(){
+ lang=pickLang();const h=document.documentElement;h.lang=lang;h.dir=lang==='ar'?'rtl':'ltr';
+ $('lang').value=lang;
+ document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ applyTheme();$('ver').textContent='v'+(S.version||'');
+ if(info)fillQualities();renderJobs(lastJobs,true);
 }
-checkHelper();setInterval(()=>{if(!connected)checkHelper()},4000);
-btn.addEventListener('click',async()=>{
- const raw=input.value.trim();notice.classList.remove('show');
- if(!raw){say('Paste a video URL first.');input.focus();return;}
- try{const u=new URL(raw);if(!['http:','https:'].includes(u.protocol))throw 0}catch{say('That does not look like a valid URL. Include https://');return;}
- if(!connected){await checkHelper();if(!connected){say('Start the helper app on this device first (see the box above).');return;}}
- const format=document.getElementById('format').value,quality=document.getElementById('quality').value;
- btn.disabled=true;prog.classList.add('show');fill.style.width='0%';pstate.textContent='Starting…';pdetail.textContent='';
+function applyTheme(){
+ const th=S.theme||'system',dark=th==='dark'||(th==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);
+ document.documentElement.dataset.theme=dark?'dark':'light';
+ $('themeBtn').textContent=t('theme_'+th);
+}
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyTheme);
+const fmtBytes=n=>{if(!n)return'';const u=['B','KB','MB','GB','TB'];let i=0;while(n>=1024&&i<4){n/=1024;i++}return n.toFixed(i>1?1:0)+' '+u[i]};
+const fmtDur=s=>{if(!s)return'';s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(r).padStart(2,'0')};
+const fmtEta=s=>{if(s==null)return'';s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?h+'h '+m+'m':m?m+'m '+(s%60)+'s':s+'s'};
+function qTag(h){return h>=4320?'8K':h>=2160?'4K':h>=1440?'2K':h>=1080?'Full HD':h>=720?'HD':''}
+function say(txt,bad){const m=$('msg');m.textContent=txt||'';m.classList.toggle('show',!!txt);m.classList.toggle('bad',!!bad)}
+const errText=c=>t('e_'+c)===('e_'+c)?t('e_failed'):t('e_'+c);
+
+// ---- check link
+let timer=null;
+function validUrl(v){try{const u=new URL(v);return u.protocol==='http:'||u.protocol==='https:'}catch{return false}}
+async function checkLink(){
+ const v=$('url').value.trim();say('');
+ if(!v){$('preview').classList.remove('show');info=null;return}
+ if(!validUrl(v)){say(t('bad_url'),true);return}
+ if(v===infoUrl&&info)return;
+ say(t('checking'));$('check').disabled=true;
  try{
-  const r=await api('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:raw,format,quality})});
-  const j=await r.json();if(!r.ok)throw new Error(j.error||'Request failed.');
-  await poll(j.id);
- }catch(e){
-  prog.classList.remove('show');
-  if(e instanceof TypeError){connected=false;checkHelper();say('Lost the connection to the helper app. Make sure it is still running.');}
-  else say(e.message);
- }finally{btn.disabled=false}
+  const r=await post('/api/info',{url:v});const j=await r.json();
+  if(v!==$('url').value.trim())return;
+  if(!r.ok){info=null;$('preview').classList.remove('show');say(errText(j.error),true);return}
+  info=j;infoUrl=v;say('');showPreview();
+ }catch{say(t('lost'),true)}finally{$('check').disabled=false}
+}
+function showPreview(){
+ $('pvImg').src=info.thumbnail||'';$('pvImg').style.visibility=info.thumbnail?'visible':'hidden';
+ $('pvTitle').textContent=info.title;
+ $('pvMeta').textContent=[info.uploader,info.site,fmtDur(info.duration)].filter(Boolean).join(' · ');
+ fillQualities();$('pathText').textContent=S.download_dir;$('preview').classList.add('show');
+}
+function fillQualities(){
+ const q=$('quality'),qs=info.qualities||[];q.innerHTML='';
+ const add=(v,txt)=>{const o=document.createElement('option');o.value=v;o.textContent=txt;q.appendChild(o)};
+ const label=x=>{const tag=qTag(x.height);return x.height+'p'+(tag?' '+tag:'')+(x.size?' · ~'+fmtBytes(x.size):'')};
+ if(!qs.length)add('best',t('best'));
+ else qs.forEach((x,i)=>add(i===0?'best':String(x.height),(i===0?t('best')+' · ':'')+label(x)));
+ q.disabled=$('format').value==='mp3';
+}
+$('format').addEventListener('change',()=>{$('quality').disabled=$('format').value==='mp3'});
+$('url').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(checkLink,700)});
+$('url').addEventListener('paste',()=>{clearTimeout(timer);timer=setTimeout(checkLink,150)});
+$('url').addEventListener('keydown',e=>{if(e.key==='Enter'){clearTimeout(timer);checkLink()}});
+$('check').addEventListener('click',()=>{infoUrl='';checkLink()});
+
+// ---- start download
+$('go').addEventListener('click',async()=>{
+ if(!info)return;$('go').disabled=true;
+ const opt=$('quality').selectedOptions[0],h=info.qualities&&info.qualities.find(x=>String(x.height)===$('quality').value);
+ const best=info.qualities&&info.qualities[0];
+ const size=($('format').value==='mp4'?(h||best||{}).size:null)||null;
+ try{
+  const r=await post('/api/jobs',{url:infoUrl,format:$('format').value,quality:$('quality').value,title:info.title,thumbnail:info.thumbnail,duration:info.duration,site:info.site,size_estimate:size});
+  const j=await r.json();
+  if(!r.ok){say(errText(j.error),true);return}
+  $('url').value='';info=null;infoUrl='';$('preview').classList.remove('show');say('');loadJobs();
+ }catch{say(t('lost'),true)}finally{$('go').disabled=false}
 });
-async function poll(id){
- for(;;){
-  const r=await api('/api/jobs/'+id);const j=await r.json();
-  if(!r.ok)throw new Error(j.error||'Lost the job.');
-  fill.style.width=(j.percent||0)+'%';
-  if(j.status==='error')throw new Error(j.error||'Download failed.');
-  if(j.status==='done'){
-   pstate.textContent='Done ✓ '+(j.filename||'');pdetail.innerHTML=fmtBytes(j.size)+' <button class="mini" id="openfolder">Open folder</button>';
-   document.getElementById('openfolder').onclick=()=>api('/api/open-folder',{method:'POST'});
-   return;
+
+// ---- save to
+async function chooseFolder(){
+ try{
+  const r=await post('/api/choose-folder');const j=await r.json();
+  let path=null;
+  if(r.status===501){path=prompt(t('folder_prompt'),S.download_dir);if(!path)return}
+  else if(j.cancelled)return;else if(j.path)path=j.path;
+  if(!path)return;
+  const r2=await post('/api/settings',{download_dir:path});
+  if(!r2.ok){say(t('folder_bad'),true);return}
+  S=Object.assign(S,await r2.json());$('pathText').textContent=S.download_dir;
+ }catch{say(t('lost'),true)}
+}
+$('saveTo').addEventListener('click',chooseFolder);
+
+// ---- jobs list
+let lastJobs=[],cards={};
+function renderJobs(list,force){
+ lastJobs=list;const box=$('jobs');$('none').style.display=list.length?'none':'';
+ if(force){box.innerHTML='';cards={}}
+ const ids=new Set(list.map(j=>j.id));
+ for(const id of Object.keys(cards))if(!ids.has(id)){cards[id].el.remove();delete cards[id]}
+ list.forEach((j,idx)=>{
+  let c=cards[j.id];
+  if(!c){
+   const el=document.createElement('div');el.className='job';
+   el.innerHTML='<img class="thumb" alt=""><div class="body"><div class="ttl"></div><div class="meta"></div><div class="bar"><i></i></div><div class="st"></div><div class="acts"></div></div>';
+   c=cards[j.id]={el,sig:'',img:el.querySelector('img'),ttl:el.querySelector('.ttl'),meta:el.querySelector('.meta'),fill:el.querySelector('i'),st:el.querySelector('.st'),acts:el.querySelector('.acts')};
+   if(j.thumbnail)c.img.src=j.thumbnail;else c.img.style.display='none';
+   c.ttl.textContent=j.title||j.url;
   }
-  pstate.textContent=j.status==='processing'?'Processing (merging)…':j.status==='queued'?'Queued…':'Downloading '+(j.percent||0).toFixed(1)+'%';
-  pdetail.textContent=[j.speed?fmtBytes(j.speed)+'/s':'',j.eta!=null?'ETA '+fmtTime(j.eta):''].filter(Boolean).join(' · ');
-  await new Promise(res=>setTimeout(res,1000));
- }
+  if(box.children[idx]!==c.el)box.insertBefore(c.el,box.children[idx]||null);
+  c.el.className='job '+j.status;
+  c.meta.textContent=[j.site,fmtDur(j.duration),j.format==='mp3'?'MP3':(j.quality==='best'?'':j.quality+'p')].filter(Boolean).join(' · ');
+  c.fill.style.width=(j.status==='done'?100:j.percent||0)+'%';
+  let s=t('s_'+j.status);
+  if(j.status==='downloading')s+=' '+(j.percent||0).toFixed(1)+'%'+(j.speed?' · '+fmtBytes(j.speed)+'/s':'')+(j.eta!=null?' · '+fmtEta(j.eta):'');
+  else if(j.status==='paused'||j.status==='waiting')s+=' · '+(j.percent||0).toFixed(1)+'%';
+  else if(j.status==='done')s+=' · '+fmtBytes(j.size);
+  else if(j.status==='error')s+=': '+errText(j.error);
+  c.st.textContent=s;
+  const sig=j.status+'|'+lang;
+  if(sig!==c.sig){c.sig=sig;c.acts.innerHTML='';
+   const btn=(k,fn)=>{const b=document.createElement('button');b.className='small';b.type='button';b.textContent=t(k);b.onclick=async()=>{b.disabled=true;await fn();loadJobs()};c.acts.appendChild(b)};
+   const act=a=>()=>post('/api/jobs/'+j.id+'/'+a);
+   if(['queued','downloading','waiting'].includes(j.status))btn('pause',act('pause'));
+   if(j.status==='paused')btn('resume',act('resume'));
+   if(j.status==='error')btn('retry',act('resume'));
+   if(j.status==='done')btn('show',act('reveal'));
+   if(['queued','downloading','processing','waiting','paused'].includes(j.status))btn('cancel',act('cancel'));
+   if(['done','error'].includes(j.status))btn('remove',act('remove'));
+  }
+ });
 }
-document.getElementById('quit').addEventListener('click',()=>{api('/api/quit',{method:'POST'}).catch(()=>{});document.body.innerHTML='<p style="text-align:center;margin-top:30vh;color:#98a5bd">The app was closed. You can close this tab.</p>'});
-document.getElementById('format').addEventListener('change',e=>{
- const q=document.getElementById('quality');q.disabled=e.target.value==='mp3';q.style.opacity=q.disabled?'.5':'1';
-});
-input.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click()});
+let up=true;
+async function loadJobs(){
+ try{const l=await jget('/api/jobs');setUp(true);renderJobs(l)}catch{setUp(false)}
+}
+function setUp(ok){
+ if(ok===up)return;up=ok;
+ if(!ok){showBanner(t('lost'),null,true)}else hideBanner();
+}
+(async function loop(){
+ await loadJobs();
+ const active=lastJobs.some(j=>['queued','downloading','processing','waiting'].includes(j.status));
+ setTimeout(loop,active?1000:3000);
+})();
+
+// ---- banner / updates
+let bannerKind='';
+function showBanner(text,btn,lost){const b=$('banner');b.className='banner show'+(lost?' lost':'');$('bannerText').textContent=text;const bb=$('bannerBtn');bb.style.display=btn?'':'none';if(btn){bb.textContent=btn.text;bb.onclick=btn.fn}}
+function hideBanner(){if(bannerKind!=='update')$('banner').className='banner'}
+async function checkUpdate(){
+ try{
+  const v=await jget('/api/version');
+  if(v.update&&v.update.state==='error'){bannerKind='update';showBanner(t('update_fail'),{text:t('update_btn'),fn:startUpdate});return}
+  if(v.update&&v.update.state==='downloading'){bannerKind='update';showBanner(t('update_down')+' '+(v.update.percent||0)+'%');setTimeout(checkUpdate,1000);return}
+  if(v.update&&v.update.state==='installing'){bannerKind='update';showBanner(t('update_inst'));setTimeout(checkUpdate,1500);return}
+  if(v.update_available){bannerKind='update';showBanner(t('update_new')+'v'+v.latest,{text:t('update_btn'),fn:startUpdate})}
+ }catch{}
+}
+async function startUpdate(){try{await post('/api/update');}catch{}setTimeout(checkUpdate,500)}
+setInterval(checkUpdate,3600000);
+
+// ---- settings dialog
+$('setBtn').addEventListener('click',()=>{$('stats').checked=!!S.stats;$('dlg').showModal()});
+$('close').addEventListener('click',()=>$('dlg').close());
+$('stats').addEventListener('change',async()=>{S.stats=$('stats').checked;await post('/api/settings',{stats:S.stats})});
+$('priv').addEventListener('click',()=>post('/api/open-url',{url:SITE+'/privacy.html'}));
+$('quit').addEventListener('click',async()=>{try{await post('/api/quit')}catch{}document.body.innerHTML='<p style="text-align:center;margin-top:30vh;font-family:sans-serif;color:#98a5bd">'+t('closed')+'</p>'});
+$('lang').addEventListener('change',async()=>{S.language=$('lang').value;applyLang();try{await post('/api/settings',{language:S.language})}catch{}});
+$('themeBtn').addEventListener('click',async()=>{const o=['system','light','dark'];S.theme=o[(o.indexOf(S.theme)+1)%3];applyTheme();try{await post('/api/settings',{theme:S.theme})}catch{}});
+
+(async function init(){
+ try{S=Object.assign(S,await jget('/api/settings'))}catch{}
+ applyLang();checkUpdate();
+})();
 </script>
 <script>
 // Ad slot: the ad lives in a frame hosted on our website (a different origin from this app), so ad code cannot touch the app.
 (function(){
-  var SITE='https://ultravideodownloader.oussamakhouya73.workers.dev';
   var file=innerWidth>=760?'banner.html':'banner-small.html';
   var slots=[].slice.call(document.querySelectorAll('.adslot'));
   slots.forEach(function(s){s.querySelector('iframe').src=SITE+'/ads/'+file+'?s='+s.getAttribute('data-slot');});

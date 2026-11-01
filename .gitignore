@@ -6,3 +6,5 @@ __pycache__/
 dist/
 build/
 *.spec
+installer-out/
+backend/uvd_version.py.bak
